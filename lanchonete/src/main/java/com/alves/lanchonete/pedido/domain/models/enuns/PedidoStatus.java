@@ -7,11 +7,31 @@ public enum PedidoStatus {
     ENTREGUE(4, "entregue"),
     CANCELADO(5, "cancelado");
 
-    private int cod;
+    private Integer cod;
     private String descr;
 
-    PedidoStatus(int cod, String descr) {
+    PedidoStatus(Integer cod, String descr) {
         this.cod = cod;
         this.descr = descr;
+    }
+
+    public Integer getCod() {
+        return cod;
+    }
+
+    public String getDescr() {
+        return descr;
+    }
+
+    public static PedidoStatus toEnum(Integer cod) {
+        if (cod == null) {
+            return null;
+        }
+        for (PedidoStatus x : PedidoStatus.values()) {
+            if (x.getCod().equals(cod)) {
+                return x;
+            }
+        }
+        throw new IllegalArgumentException("Codigo invalido: " + cod);
     }
 }
