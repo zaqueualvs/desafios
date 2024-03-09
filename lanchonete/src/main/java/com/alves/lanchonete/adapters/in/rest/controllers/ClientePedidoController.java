@@ -4,10 +4,8 @@ import com.alves.lanchonete.adapters.in.rest.data.request.ClientePedidoRequest;
 import com.alves.lanchonete.adapters.in.rest.data.request.PedidoRequest;
 import com.alves.lanchonete.adapters.in.rest.data.response.PedidoResponse;
 import com.alves.lanchonete.adapters.in.rest.mappers.PedidoRestMapper;
-import com.alves.lanchonete.applications.ports.in.cliente.FindClienteByIdUseCase;
-import com.alves.lanchonete.applications.ports.in.cliente.SaveClienteUseCase;
 import com.alves.lanchonete.applications.ports.in.pedido.DeletePedidoByIdUseCase;
-import com.alves.lanchonete.applications.ports.in.pedido.FindPedidoByIdUseCase;
+import com.alves.lanchonete.applications.ports.in.pedido.FindAllPedidoByClienteIdUseCase;
 import com.alves.lanchonete.applications.ports.in.pedido.SavePedidoUseCase;
 import com.alves.lanchonete.domain.models.Cliente;
 import com.alves.lanchonete.domain.models.Pedido;
@@ -17,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "clientes/{clienteId}")
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class ClientePedidoController {
     private final SavePedidoUseCase savePedidoUseCase;
     private final DeletePedidoByIdUseCase deletePedidoByIdUseCase;
     private final PedidoRestMapper pedidoRestMapper;
+    private final FindAllPedidoByClienteIdUseCase findAllPedidoByClienteIdUseCase;
 
     @PostMapping("/pedidos")
     public ResponseEntity<PedidoResponse> save(@PathVariable Long clienteId,
@@ -34,6 +35,17 @@ public class ClientePedidoController {
         pedido = savePedidoUseCase.save(pedido);
         PedidoResponse pedidoResponse = pedidoRestMapper.toResponse(pedido);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoResponse);
+    }
+
+    @GetMapping("/pedidos")
+    public ResponseEntity<List<PedidoResponse>> findByClienteId(@PathVariable Long clienteId) {
+        List<PedidoResponse> pedidoResponseList = findAllPedidoByClienteIdUseCase
+                .find(clienteId)
+                .stream()
+                .map(pedidoRestMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(pedidoResponseList);
     }
 
     @DeleteMapping("/pedidos/{pedidoId}")
