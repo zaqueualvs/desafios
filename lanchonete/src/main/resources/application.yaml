@@ -18,3 +18,6 @@ spring:
 
   flyway:
     locations: classpath:db/migration,classpath:db/testdata
+
+server:
+  port: 8080
