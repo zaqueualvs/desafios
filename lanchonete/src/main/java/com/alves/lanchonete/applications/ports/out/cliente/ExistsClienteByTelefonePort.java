@@ -1,6 +1,8 @@
 package com.alves.lanchonete.applications.ports.out.cliente;
 
-public interface ExistClienteByTelefonePort {
+import com.alves.lanchonete.domain.models.Cliente;
+
+public interface ExistsClienteByTelefonePort {
 
     Boolean existsByTelefone(String telefone);
 }

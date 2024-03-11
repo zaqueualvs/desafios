@@ -10,8 +10,8 @@ CREATE TABLE cliente
 (
     id       BIGINT NOT NULL AUTO_INCREMENT,
     nome     VARCHAR(30),
-    email    VARCHAR(30),
-    telefone VARCHAR(30),
+    email    VARCHAR(30) UNIQUE ,
+    telefone VARCHAR(30) UNIQUE ,
     endereco VARCHAR(30),
 
     PRIMARY KEY (id)

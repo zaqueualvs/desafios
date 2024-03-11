@@ -1,6 +1,8 @@
 package com.alves.lanchonete.domain.services.pedido;
 
 import com.alves.lanchonete.applications.ports.in.cliente.FindClienteByIdUseCase;
+import com.alves.lanchonete.applications.ports.out.event.PedidoCreatedEventPublisher;
+import com.alves.lanchonete.domain.event.PedidoCreatedEvent;
 import com.alves.lanchonete.domain.models.Cliente;
 import com.alves.lanchonete.commons.customannotations.UseCase;
 import com.alves.lanchonete.applications.ports.in.pedido.SavePedidoUseCase;
@@ -20,6 +22,7 @@ public class SavePedidoService implements SavePedidoUseCase {
     private final SavePedidoPort savePedidoPort;
     private final FindClienteByIdUseCase findClienteByIdUseCase;
     private final FindProdutoByIdUseCase findProdutoByIdUseCase;
+    private final PedidoCreatedEventPublisher pedidoCreatedEventPublisher;
 
     @Override
     public Pedido save(Pedido pedido) {
@@ -30,7 +33,8 @@ public class SavePedidoService implements SavePedidoUseCase {
                 .map(produto -> findProdutoByIdUseCase.findById(produto.getId()))
                 .collect(Collectors.toSet());
         pedido.setProdutos(produtos);
-
-        return savePedidoPort.save(pedido);
+        pedido = savePedidoPort.save(pedido);
+        pedidoCreatedEventPublisher.publisherEvent(new PedidoCreatedEvent(pedido.getId()));
+        return pedido;
     }
 }

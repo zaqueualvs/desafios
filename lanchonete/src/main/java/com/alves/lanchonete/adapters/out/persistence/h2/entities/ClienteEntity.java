@@ -22,7 +22,9 @@ public class ClienteEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    @Column(unique = true)
     private String email;
+    @Column(unique = true)
     private String telefone;
     private String endereco;
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "cliente")
