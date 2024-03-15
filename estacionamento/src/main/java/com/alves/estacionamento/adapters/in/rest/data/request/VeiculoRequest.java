@@ -1,0 +1,25 @@
+package com.alves.estacionamento.adapters.in.rest.data.request;
+
+import com.alves.estacionamento.application.domain.models.enums.TipoVeiculo;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+public class VeiculoRequest {
+
+    private Long id;
+    private String modelo;
+    private String cor;
+    private String marca;
+    private String placa;
+    private Integer tipoVeiculo;
+
+    public TipoVeiculo getTipoVeiculo() {
+        return TipoVeiculo.toEnum(tipoVeiculo);
+    }
+}
