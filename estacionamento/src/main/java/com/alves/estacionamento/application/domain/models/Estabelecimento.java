@@ -3,6 +3,7 @@ package com.alves.estacionamento.application.domain.models;
 import jakarta.persistence.OneToMany;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Estabelecimento {
@@ -82,5 +83,18 @@ public class Estabelecimento {
 
     public void setVagasUsada(Set<VagaEstacionamento> vagasUsada) {
         this.vagasUsada = vagasUsada;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Estabelecimento that = (Estabelecimento) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

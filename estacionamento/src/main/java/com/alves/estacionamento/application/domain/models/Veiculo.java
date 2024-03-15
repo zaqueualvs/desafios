@@ -2,6 +2,8 @@ package com.alves.estacionamento.application.domain.models;
 
 import com.alves.estacionamento.application.domain.models.enums.TipoVeiculo;
 
+import java.util.Objects;
+
 public class Veiculo {
 
     private Long id;
@@ -69,5 +71,18 @@ public class Veiculo {
 
     public void setTipoVeiculo(TipoVeiculo tipoVeiculo) {
         this.tipoVeiculo = tipoVeiculo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Veiculo veiculo = (Veiculo) o;
+        return Objects.equals(id, veiculo.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

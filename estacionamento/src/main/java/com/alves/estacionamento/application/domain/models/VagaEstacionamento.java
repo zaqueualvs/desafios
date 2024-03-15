@@ -1,12 +1,12 @@
 package com.alves.estacionamento.application.domain.models;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 
 public class VagaEstacionamento {
 
     private Estabelecimento estabelecimento;
-
     private Veiculo veiculo;
     private OffsetDateTime dataEntrada;
 
@@ -41,5 +41,18 @@ public class VagaEstacionamento {
 
     public void setDataEntrada(OffsetDateTime dataEntrada) {
         this.dataEntrada = dataEntrada;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VagaEstacionamento that = (VagaEstacionamento) o;
+        return Objects.equals(estabelecimento, that.estabelecimento) && Objects.equals(veiculo, that.veiculo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(estabelecimento, veiculo);
     }
 }

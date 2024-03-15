@@ -12,10 +12,10 @@ CREATE TABLE veiculo
 
 CREATE TABLE estabelecimento
 (
-    id               BIGINT AUTO_INCREMENT NOT NULL,
-    cnpj             VARCHAR(14)           NOT NULL,
-    endereco         VARCHAR(50)           NOT NULL,
-    telefone         VARCHAR(12)           NOT NULL,
+    id                 BIGINT AUTO_INCREMENT NOT NULL,
+    cnpj               VARCHAR(14)           NOT NULL,
+    endereco           VARCHAR(50)           NOT NULL,
+    telefone           VARCHAR(12)           NOT NULL,
     total_vagas_motos  INTEGER               NOT NULL,
     total_vagas_carros INTEGER               NOT NULL,
 
@@ -24,10 +24,13 @@ CREATE TABLE estabelecimento
 
 CREATE TABLE historico_estacionamento
 (
+    id                 BIGINT NOT NULL AUTO_INCREMENT,
     estabelecimento_id BIGINT,
     veiculo_id         BIGINT,
     data_entrada       TIMESTAMP WITH TIME ZONE,
     data_saida         TIMESTAMP WITH TIME ZONE,
+
+    PRIMARY KEY (id),
 
     CONSTRAINT fk_historico_estacionamento_estabelecimento
         FOREIGN KEY (estabelecimento_id)

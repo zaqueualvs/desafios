@@ -1,6 +1,5 @@
 package com.alves.estacionamento.application.domain.services.vagaestacionamento;
 
-import com.alves.estacionamento.adapters.in.rest.data.request.EstabelecimentoRequest;
 import com.alves.estacionamento.application.domain.models.Estabelecimento;
 import com.alves.estacionamento.application.domain.models.HistoricoEstacionamento;
 import com.alves.estacionamento.application.domain.models.VagaEstacionamento;
@@ -10,9 +9,10 @@ import com.alves.estacionamento.application.ports.in.estabelecimento.FindEstabel
 import com.alves.estacionamento.application.ports.in.estabelecimento.UpdateEstabelecimentoUseCase;
 import com.alves.estacionamento.application.ports.in.vagaestacionamento.SaveVagaEstacionamentoUseCase;
 import com.alves.estacionamento.application.ports.in.veiculo.FindVeiculoByIdUseCase;
-import com.alves.estacionamento.application.ports.out.historicoEstacionamento.SaveHistoricoEstabelecimentoPort;
+import com.alves.estacionamento.application.ports.out.historicoEstacionamento.SaveHistoricoEstacionamentoPort;
 import com.alves.estacionamento.common.UseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 
@@ -20,52 +20,62 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class SaveVagaEstacionamentoService implements SaveVagaEstacionamentoUseCase {
 
-    private final SaveHistoricoEstabelecimentoPort saveHistoricoEstabelecimentoPort;
+    private final SaveHistoricoEstacionamentoPort saveHistoricoEstabelecimentoPort;
     private final FindVeiculoByIdUseCase findVeiculoByIdUseCase;
     private final FindEstabelecimentoByIdUseCase findEstabelecimentoByIdUseCase;
     private final UpdateEstabelecimentoUseCase updateEstabelecimentoUseCase;
 
+    @Transactional
     public VagaEstacionamento save(VagaEstacionamento vagaEstacionamento) {
-        Veiculo veiculo = findVeiculoByIdUseCase.find(vagaEstacionamento.getVeiculo().getId());
+        Long veiculoId = vagaEstacionamento.getVeiculo().getId();
+        Veiculo veiculo = findVeiculoByIdUseCase.find(veiculoId);
         Estabelecimento estabelecimento = findEstabelecimentoByIdUseCase.find(vagaEstacionamento.getEstabelecimento().getId());
 
-        boolean temVaga = estaDisponivel(veiculo, estabelecimento);
+        estaDisponivel(veiculo.getTipoVeiculo(), estabelecimento);
 
-        if (!temVaga) {
-            throw new RuntimeException("Estacionamento cheio");
-        }
-        VagaEstacionamento newVaga = new VagaEstacionamento();
-        newVaga.setVeiculo(veiculo);
-        newVaga.setEstabelecimento(estabelecimento);
+        vagaEstacionamento.setVeiculo(veiculo);
+        vagaEstacionamento.setEstabelecimento(estabelecimento);
+        vagaEstacionamento.setDataEntrada(OffsetDateTime.now());
 
-        estabelecimento.getVagasUsada().add(newVaga);
+        jaEstaEstacionado(estabelecimento, vagaEstacionamento);
+
+        estabelecimento.getVagasUsada().add(vagaEstacionamento);
+        estabelecimento = updateEstabelecimentoUseCase.update(estabelecimento);
 
         HistoricoEstacionamento historicoEstacionamento = new HistoricoEstacionamento();
         historicoEstacionamento.setEstabelecimento(estabelecimento);
         historicoEstacionamento.setVeiculo(veiculo);
+        historicoEstacionamento.setDataEntrada(vagaEstacionamento.getDataEntrada());
 
         saveHistoricoEstabelecimentoPort.save(historicoEstacionamento);
-
         updateEstabelecimentoUseCase.update(estabelecimento);
 
-        return newVaga;
+        return vagaEstacionamento;
     }
 
-    private Boolean estaDisponivel(Veiculo veiculo, Estabelecimento estabelecimento) {
-        TipoVeiculo tipoVeiculo = veiculo.getTipoVeiculo();
+    private void estaDisponivel(TipoVeiculo tipoVeiculo, Estabelecimento estabelecimento) {
+        boolean disponivel = false;
+        long vagaUsada = estabelecimento.getVagasUsada()
+                .stream()
+                .filter(v -> v.getVeiculo().getTipoVeiculo().equals(tipoVeiculo))
+                .count();
+
         if (tipoVeiculo.equals(TipoVeiculo.MOTO)) {
-            return estabelecimento.getTotalVagasMotos() >= estabelecimento.getVagasUsada()
-                    .stream()
-                    .filter(v -> v.getVeiculo().equals(tipoVeiculo))
-                    .count()
-                    ;
+            disponivel = (vagaUsada < estabelecimento.getTotalVagasMotos());
         } else if (tipoVeiculo.equals(TipoVeiculo.CARRO)) {
-            return estabelecimento.getTotalVagasCarros() >= estabelecimento.getVagasUsada()
-                    .stream()
-                    .filter(v -> v.getVeiculo().equals(tipoVeiculo))
-                    .count()
-                    ;
+            disponivel = (vagaUsada < estabelecimento.getTotalVagasCarros());
         }
-        throw new RuntimeException("erro inesperado");
+        if (!disponivel) {
+            throw new RuntimeException("Estacionamento cheio");
+        }
+
+    }
+
+    private void jaEstaEstacionado(Estabelecimento estabelecimento, VagaEstacionamento vagaEstacionamento) {
+        if (estabelecimento.getVagasUsada().contains(vagaEstacionamento)) {
+            throw new RuntimeException(
+                    String.format("Veiculo do tipo %s ja esta no estacionamento", vagaEstacionamento.getVeiculo().getTipoVeiculo())
+            );
+        }
     }
 }

@@ -29,11 +29,6 @@ public class VagaEstacionamentoEntity {
         this.dataEntrada = dataEntrada;
     }
 
-    @PrePersist
-    private void prePersist() {
-        setDataEntrada(OffsetDateTime.now());
-    }
-
     public EstabelecimentoEntity getEstabelecimento() {
         return id.getEstabelecimento();
     }

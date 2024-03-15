@@ -31,6 +31,6 @@ public class EstabelecimentoEntity {
     private Integer totalVagasMotos;
     @Column(nullable = false)
     private Integer totalVagasCarros;
-    @OneToMany(mappedBy = "id.estabelecimento")
+    @OneToMany(orphanRemoval = true, cascade = {CascadeType.ALL}, mappedBy = "id.estabelecimento")
     private Set<VagaEstacionamentoEntity> vagasUsada = new HashSet<>();
 }

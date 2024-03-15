@@ -1,8 +1,6 @@
 package com.alves.estacionamento.adapters.out.persistence.h2.mappers;
 
-import com.alves.estacionamento.adapters.out.persistence.h2.entities.EstabelecimentoEntity;
 import com.alves.estacionamento.adapters.out.persistence.h2.entities.HistoricoEstacionamentoEntity;
-import com.alves.estacionamento.application.domain.models.Estabelecimento;
 import com.alves.estacionamento.application.domain.models.HistoricoEstacionamento;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -10,7 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring",
         uses = {VeiculoPersistenceMapper.class,
                 EstabelecimentoPersistenceMapper.class})
-public interface HistoricoEstabelecimentoPersistenceMapper {
+public interface HistoricoEstacionamentoPersistenceMapper {
 
     HistoricoEstacionamentoEntity toEntity(HistoricoEstacionamento historicoEstacionamento, @Context CycleAvoidingMappingContext context);
 

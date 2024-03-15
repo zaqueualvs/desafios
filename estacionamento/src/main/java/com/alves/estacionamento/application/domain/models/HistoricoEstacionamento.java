@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 
 
 public class HistoricoEstacionamento {
+    private Long id;
     private Estabelecimento estabelecimento;
     private Veiculo veiculo;
     private OffsetDateTime dataEntrada;
@@ -15,14 +16,24 @@ public class HistoricoEstacionamento {
     public HistoricoEstacionamento() {
     }
 
-    public HistoricoEstacionamento(Estabelecimento estabelecimento,
+    public HistoricoEstacionamento(Long id,
+                                   Estabelecimento estabelecimento,
                                    Veiculo veiculo,
                                    OffsetDateTime dataEntrada,
                                    OffsetDateTime dataSaida) {
+        this.id = id;
         this.estabelecimento = estabelecimento;
         this.veiculo = veiculo;
         this.dataEntrada = dataEntrada;
         this.dataSaida = dataSaida;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Estabelecimento getEstabelecimento() {
