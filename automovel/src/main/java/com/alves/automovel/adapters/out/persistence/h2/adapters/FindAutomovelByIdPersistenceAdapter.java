@@ -4,19 +4,26 @@ import com.alves.automovel.adapters.out.persistence.h2.entities.AutomovelEntity;
 import com.alves.automovel.adapters.out.persistence.h2.mappers.AutomovelPersistenceMapper;
 import com.alves.automovel.adapters.out.persistence.h2.repositories.AutomovelRepository;
 import com.alves.automovel.application.domain.models.Automovel;
-import com.alves.automovel.application.ports.out.DeleteAutomovelPort;
+import com.alves.automovel.application.ports.out.FindAutomovelByIdPort;
 import com.alves.automovel.common.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+import java.util.Optional;
+
 @PersistenceAdapter
-public class DeleteAutomovelPersistenceAdapter implements DeleteAutomovelPort {
+@RequiredArgsConstructor
+public class FindAutomovelByIdPersistenceAdapter implements FindAutomovelByIdPort {
 
     private final AutomovelRepository automovelRepository;
     private final AutomovelPersistenceMapper automovelPersistenceMapper;
 
-    public void delete(Automovel automovel) {
-        AutomovelEntity automovelEntity = automovelPersistenceMapper.toEntity(automovel);
-        automovelRepository.delete(automovelEntity);
+    @Override
+    public Optional<Automovel> find(Long id) {
+        Optional<AutomovelEntity> automovelEntityO = automovelRepository.findById(id);
+        if (automovelEntityO.isEmpty()) {
+            return Optional.empty();
+        }
+        Automovel automovel = automovelPersistenceMapper.toDomain(automovelEntityO.get());
+        return Optional.of(automovel);
     }
 }
