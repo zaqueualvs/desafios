@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @UseCase
 @RequiredArgsConstructor
 public class DeleteAutomovelByIdService implements DeleteAutomovelByIdUseCase {
+
     private final FindAutomovelByIdUseCase findAutomovelByIdUseCase;
     private final DeleteAutomovelPort deleteAutomovelPort;
 

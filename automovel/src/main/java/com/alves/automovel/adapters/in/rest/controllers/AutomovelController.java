@@ -6,7 +6,6 @@ import com.alves.automovel.adapters.in.rest.mappers.AutomovelRestMapper;
 import com.alves.automovel.application.domain.models.Automovel;
 import com.alves.automovel.application.ports.in.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -14,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "automoveis")
@@ -32,6 +34,12 @@ public class AutomovelController {
         List<AutomovelResponse> automovelResponsesList = findAllAutomovelUseCase.find()
                 .stream()
                 .map(automovelRestMapper::toResponse)
+                .map(automovelResponse -> automovelResponse
+                        .add(linkTo(methodOn(AutomovelController.class)
+                                .findById(automovelResponse.getId()))
+                                .withSelfRel()
+                        )
+                )
                 .toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(automovelResponsesList);
@@ -41,6 +49,7 @@ public class AutomovelController {
     public ResponseEntity<AutomovelResponse> findById(@PathVariable Long id) {
         Automovel automovel = findAutomovelByIdUseCase.find(id);
         AutomovelResponse automovelResponse = automovelRestMapper.toResponse(automovel);
+        automovelResponse.add(linkTo(methodOn(AutomovelController.class).findAll()).withRel("Todos automoveis"));
         return ResponseEntity.status(HttpStatus.OK).body(automovelResponse);
 
     }
@@ -50,6 +59,7 @@ public class AutomovelController {
         Automovel automovel = automovelRestMapper.toDomain(automovelRequest);
         automovel = saveAutomovelUseCase.save(automovel);
         AutomovelResponse automovelResponse = automovelRestMapper.toResponse(automovel);
+        automovelResponse.add(linkTo(methodOn(AutomovelController.class).findAll()).withRel("Todos automoveis"));
         return ResponseEntity.status(HttpStatus.CREATED).body(automovelResponse);
     }
 
@@ -60,6 +70,7 @@ public class AutomovelController {
         BeanUtils.copyProperties(automovelRequest, automovel);
         automovel = updateAutomovelUseCase.update(automovel);
         AutomovelResponse automovelResponse = automovelRestMapper.toResponse(automovel);
+        automovelResponse.add(linkTo(methodOn(AutomovelController.class).findAll()).withRel("Todos automoveis"));
         return ResponseEntity.status(HttpStatus.OK).body(automovelResponse);
     }
 
