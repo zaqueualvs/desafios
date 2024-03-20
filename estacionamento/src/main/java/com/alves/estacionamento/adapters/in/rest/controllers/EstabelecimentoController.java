@@ -3,6 +3,7 @@ package com.alves.estacionamento.adapters.in.rest.controllers;
 import com.alves.estacionamento.adapters.in.rest.data.request.EstabelecimentoRequest;
 import com.alves.estacionamento.adapters.in.rest.data.response.EstabelecimentoFullReponse;
 import com.alves.estacionamento.adapters.in.rest.data.response.EstabelecimentoReponse;
+import com.alves.estacionamento.adapters.in.rest.data.response.VeiculoResponse;
 import com.alves.estacionamento.adapters.in.rest.mappers.EstabelecimentoRestMapper;
 import com.alves.estacionamento.application.domain.models.Estabelecimento;
 import com.alves.estacionamento.application.ports.in.estabelecimento.*;
@@ -67,4 +68,17 @@ public class EstabelecimentoController {
         deleteEstabelecimentoByIdUseCase.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @GetMapping("/ultimaHora")
+    public ResponseEntity<List<VeiculoResponse>> findVeiculoUltimaHora() {
+        List<VeiculoResponse> veiculoResponses;
+        return ResponseEntity.status(HttpStatus.OK).body(veiculoResponses);
+    }
+
+    @GetMapping("/ultimaDia")
+    public ResponseEntity<List<VeiculoResponse>> findVeiculoUltimoDia() {
+        List<VeiculoResponse> veiculoResponses;
+        return ResponseEntity.status(HttpStatus.OK).body(veiculoResponses);
+    }
+
 }

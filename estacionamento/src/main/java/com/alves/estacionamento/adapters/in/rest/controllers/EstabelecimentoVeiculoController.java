@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "estabelecimentos/{estabelecimentoId}/veiculos")
+@RequestMapping(value = "estabelecimentos/{estabelecimentoId}/veiculos/{veiculoId}")
 @RequiredArgsConstructor
 public class EstabelecimentoVeiculoController {
 
@@ -22,7 +22,7 @@ public class EstabelecimentoVeiculoController {
     private final SaveVagaEstacionamentoUseCase saveVagaEstacionamentoUseCase;
     private final DeleteVagaEstacionamentoUseCase deleteVagaEstacionamentoUseCase;
 
-    @PostMapping("/{veiculoId}/entrada")
+    @PostMapping("/entrada")
     public ResponseEntity<Object> entrada(@PathVariable Long estabelecimentoId,
                                           @PathVariable Long veiculoId) {
         VagaEstacionamentoResquest vagaEstacionamentoResquest = new VagaEstacionamentoResquest(veiculoId, estabelecimentoId);
@@ -31,7 +31,7 @@ public class EstabelecimentoVeiculoController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/{veiculoId}/saida")
+    @PostMapping("/saida")
     public ResponseEntity<Object> saida(@PathVariable Long estabelecimentoId,
                                         @PathVariable Long veiculoId) {
         VagaEstacionamentoResquest vagaEstacionamentoResquest = new VagaEstacionamentoResquest(veiculoId, estabelecimentoId);
